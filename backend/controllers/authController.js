@@ -23,6 +23,15 @@ const googleCallback = (req, res) => {
     res.redirect("http://localhost:5173/dashboard");
 };
 
+const logout = (req, res) => {
+
+    res.clearCookie("token");
+
+    res.status(200).json({
+        message: "Logged out successfully"
+    });
+
+};
 module.exports = {
-    googleCallback,
+    googleCallback,logout,
 };

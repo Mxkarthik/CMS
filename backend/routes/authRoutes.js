@@ -1,6 +1,6 @@
 const express = require("express");
 const passport = require("passport");
-
+const {logout} = require("../controllers/authController");
 const {
     googleCallback,
 } = require("../controllers/authController");
@@ -25,4 +25,5 @@ router.get(
     googleCallback
 );
 
+router.post("/logout", logout);
 module.exports = router;
