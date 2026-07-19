@@ -1,7 +1,10 @@
 const Project = require("../models/Project");
 const uploadImage = require("../services/uploadService");
+const deleteImage = require("../services/deleteImageService");
 
 const createProject = async (req, res) => {
+    const uploadedPublicIds = [];
+
     try {
 
         const {
@@ -21,20 +24,30 @@ const createProject = async (req, res) => {
         let thumbnail = null;
 
         if (thumbnailFile) {
+
             thumbnail = await uploadImage(thumbnailFile, {
                 folder: "projects/thumbnails",
             });
+
+            uploadedPublicIds.push(thumbnail.publicId);
+
         }
 
         const images = await Promise.all(
-            galleryFiles.map((file) =>
-                uploadImage(file, {
+            galleryFiles.map(async (file) => {
+
+                const image = await uploadImage(file, {
                     folder: "projects/gallery",
-                })
-            )
+                });
+
+                uploadedPublicIds.push(image.publicId);
+
+                return image;
+
+            })
         );
 
-        const projectData = {
+        const project = await Project.create({
             title,
             description,
             location,
@@ -45,9 +58,7 @@ const createProject = async (req, res) => {
             isFeatured,
             thumbnail,
             images,
-        };
-
-        const project = await Project.create(projectData);
+        });
 
         return res.status(201).json({
             success: true,
@@ -57,92 +68,11 @@ const createProject = async (req, res) => {
 
     } catch (error) {
 
-        return res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-
-    }
-};
-
-const getAllProjects = async (req, res) => {
-    try {
-
-        const projects = await Project.find().lean();
-
-        return res.status(200).json({
-            success: true,
-            count: projects.length,
-            data: projects,
-        });
-
-    } catch (error) {
-
-        return res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-
-    }
-};
-
-const getProjectById = async (req, res) => {
-    try {
-
-        const { id } = req.params;
-
-        const project = await Project.findById(id).lean();
-
-        if (!project) {
-            return res.status(404).json({
-                success: false,
-                message: "Project not found.",
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            data: project,
-        });
-
-    } catch (error) {
-
-        return res.status(500).json({
-            success: false,
-            message: error.message,
-        });
-
-    }
-};
-
-const updateProjectById = async (req, res) => {
-    try {
-
-        const { id } = req.params;
-
-        const updatedProject = await Project.findByIdAndUpdate(
-            id,
-            req.body,
-            {
-                new: true,
-                runValidators: true,
-            }
+        await Promise.allSettled(
+            uploadedPublicIds.map((publicId) =>
+                deleteImage(publicId)
+            )
         );
-
-        if (!updatedProject) {
-            return res.status(404).json({
-                success: false,
-                message: "Project not found.",
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "Project updated successfully.",
-            data: updatedProject,
-        });
-
-    } catch (error) {
 
         return res.status(500).json({
             success: false,
