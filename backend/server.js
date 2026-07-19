@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require('express')
 const connectDatabase = require('./config/database')
 const projectRoutes = require('./routes/projectRoutes')
+const heroRoutes = require('./routes/heroRoutes')
 const passport = require("./config/passport");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
@@ -38,5 +39,7 @@ app.get("/" , (req,res)=>{
     res.send("CMS Backend is Running Successfully !");
 });
 
-app.use('/projects',projectRoutes);
+app.use('/api/projects',projectRoutes);
+
+app.use('/api/hero',heroRoutes)
 
