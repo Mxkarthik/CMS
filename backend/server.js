@@ -15,6 +15,9 @@ const app = express();
 app.use(express.json());
 connectDatabase();
 
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
 const PORT = process.env.PORT;
 
 app.listen(PORT, ()=>{
