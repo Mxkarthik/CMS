@@ -7,6 +7,8 @@ const passport = require("./config/passport");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
+const projectRoutes = require("./routes/projectRoutes");
+
 const app = express();
 
 app.use(express.json());
@@ -41,5 +43,5 @@ app.get("/" , (req,res)=>{
 
 app.use('/api/projects',projectRoutes);
 
-app.use('/api/hero',heroRoutes)
+app.use('/api/hero',heroRoutes);
 

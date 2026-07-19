@@ -1,8 +1,53 @@
 const Project = require("../models/Project");
+const uploadImage = require("../services/uploadService");
 
 const createProject = async (req, res) => {
     try {
-        const project = await Project.create(req.body);
+
+        const {
+            title,
+            description,
+            location,
+            category,
+            status,
+            clientName,
+            completionDate,
+            isFeatured,
+        } = req.body;
+
+        const thumbnailFile = req.files?.thumbnail?.[0];
+        const galleryFiles = req.files?.images || [];
+
+        let thumbnail = null;
+
+        if (thumbnailFile) {
+            thumbnail = await uploadImage(thumbnailFile, {
+                folder: "projects/thumbnails",
+            });
+        }
+
+        const images = await Promise.all(
+            galleryFiles.map((file) =>
+                uploadImage(file, {
+                    folder: "projects/gallery",
+                })
+            )
+        );
+
+        const projectData = {
+            title,
+            description,
+            location,
+            category,
+            status,
+            clientName,
+            completionDate,
+            isFeatured,
+            thumbnail,
+            images,
+        };
+
+        const project = await Project.create(projectData);
 
         return res.status(201).json({
             success: true,
