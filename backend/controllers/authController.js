@@ -13,7 +13,6 @@ const googleCallback = (req, res) => {
             expiresIn: "7d",
         }
     );
-
     res.cookie("token", token, {
         httpOnly: true,
         secure: false,
