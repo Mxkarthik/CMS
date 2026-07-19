@@ -1,12 +1,12 @@
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
 
-const uploadImage = async (file) => {
+const uploadImage = async (file, options = {}) => {
     return new Promise((resolve, reject) => {
 
         const stream = cloudinary.uploader.upload_stream(
             {
-                folder: "portfolio-cms",
+                folder: options.folder || "portfolio-cms",
             },
             (error, result) => {
 
