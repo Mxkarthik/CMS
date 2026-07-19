@@ -8,6 +8,8 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const projectRoutes = require("./routes/projectRoutes");
+const analyticsRoutes = require("./routes/analyticsRoutes");
+
 
 const app = express();
 
@@ -44,4 +46,6 @@ app.get("/" , (req,res)=>{
 app.use('/api/projects',projectRoutes);
 
 app.use('/api/hero',heroRoutes);
+
+app.use("/api/analytics", analyticsRoutes);
 
