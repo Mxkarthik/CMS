@@ -1,5 +1,5 @@
 const Project = require("../models/Project");
-const uploadImage = require("../services/uploadService");
+const uploadImage = require("../services/uploadServices");
 const deleteImage = require("../services/deleteImageService");
 
 const createProject = async (req, res) => {

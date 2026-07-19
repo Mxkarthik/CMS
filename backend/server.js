@@ -7,7 +7,6 @@ const passport = require("./config/passport");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
-const projectRoutes = require("./routes/projectRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 
 
