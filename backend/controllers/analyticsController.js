@@ -1,7 +1,23 @@
 const Analytics = require("../models/Analytics");
+const { v4: uuidv4 } = require("uuid");
 
 const incrementVisitor = async (req, res) => {
     try {
+
+        if (req.cookies.visitorId) {
+            return res.status(200).json({
+                success: true,
+                message: "Visitor already counted.",
+            });
+        }
+
+        const visitorId = uuidv4();
+
+        res.cookie("visitorId", visitorId, {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60 * 24 * 365, // 1 year
+            sameSite: "Lax",
+        });
 
         await Analytics.findOneAndUpdate(
             {},
@@ -9,18 +25,14 @@ const incrementVisitor = async (req, res) => {
                 $inc: {
                     totalVisitors: 1,
                 },
-
                 $set: {
                     lastVisitAt: new Date(),
-                },
-
-                $setOnInsert: {
-                    totalProjectViews: 0,
                 },
             },
             {
                 upsert: true,
                 new: true,
+                setDefaultsOnInsert: true,
             }
         );
 
