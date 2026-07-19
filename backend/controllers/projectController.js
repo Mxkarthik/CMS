@@ -87,19 +87,30 @@ const deleteProjectById = async (req, res) => {
 
         const { id } = req.params;
 
-        const deletedProject = await Project.findByIdAndDelete(id);
+        const project = await Project.findById(id);
 
-        if (!deletedProject) {
+        if (!project) {
             return res.status(404).json({
                 success: false,
                 message: "Project not found.",
             });
         }
 
+        if (project.thumbnail?.publicId) {
+            await deleteImage(project.thumbnail.publicId);
+        }
+
+        await Promise.allSettled(
+            project.images.map((image) =>
+                deleteImage(image.publicId)
+            )
+        );
+
+        await project.deleteOne();
+
         return res.status(200).json({
             success: true,
             message: "Project deleted successfully.",
-            data: deletedProject,
         });
 
     } catch (error) {

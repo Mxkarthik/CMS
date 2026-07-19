@@ -4,7 +4,8 @@ const deleteImage = async (publicId) => {
 
     if (!publicId) return;
 
-    await cloudinary.uploader.destroy(publicId);
+    const result = await cloudinary.uploader.destroy(publicId);
+    return result;
 
 };
 
