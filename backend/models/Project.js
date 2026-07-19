@@ -1,55 +1,72 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
 const projectSchema = new mongoose.Schema(
     {
         title: {
-        type : String,
-        required : true,
-        trim: true, 
+            type: String,
+            required: true,
+            trim: true,
         },
+
         description: {
             type: String,
-            required : true,
+            required: true,
         },
+
         location: {
-            type : String,
-            required : true,
+            type: String,
+            required: true,
         },
+
         category: {
-            type : String,
-            required : true,
-            enum: ["Residential" , "Commercial" , "Industrial" , "Infrastructure"],
+            type: String,
+            required: true,
+            enum: [
+                "Residential",
+                "Commercial",
+                "Industrial",
+                "Infrastructure",
+            ],
         },
-        status : {
-            type : String,
-            required : true,
-            enum: ["Completed" , "Ongoing" , "Upcoming"],
+
+        status: {
+            type: String,
+            required: true,
+            enum: [
+                "Completed",
+                "Ongoing",
+                "Upcoming",
+            ],
         },
-        clinetName: {
-            type : String,
+
+        clientName: {
+            type: String,
         },
+
         completionDate: {
-            type : Date,
+            type: Date,
         },
-        tumbnail: {
-            type : String,
+
+        thumbnail: {
+            url: String,
+            publicId: String,
         },
+
         images: [
             {
-                type : String,
+                url: String,
+                publicId: String,
             },
         ],
+
         isFeatured: {
-            type : Boolean,
-            default : false,
+            type: Boolean,
+            default: false,
         },
     },
     {
-        timestamps : true,
+        timestamps: true,
     }
-    
 );
 
-const Project = mongoose.model("Project" , projectSchema);
-
-module.exports = Project;
+module.exports = mongoose.model("Project", projectSchema);

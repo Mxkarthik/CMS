@@ -1,12 +1,19 @@
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
 
-const uploadImage = async (file, options = {}) => {
+const uploadImage = async (
+    file,
+    {
+        folder = "portfolio-cms",
+        transformation = [],
+    } = {}
+) => {
     return new Promise((resolve, reject) => {
 
         const stream = cloudinary.uploader.upload_stream(
             {
-                folder: options.folder || "portfolio-cms",
+                folder,
+                transformation,
             },
             (error, result) => {
 
@@ -17,6 +24,10 @@ const uploadImage = async (file, options = {}) => {
                 resolve({
                     url: result.secure_url,
                     publicId: result.public_id,
+                    width: result.width,
+                    height: result.height,
+                    format: result.format,
+                    bytes: result.bytes,
                 });
 
             }

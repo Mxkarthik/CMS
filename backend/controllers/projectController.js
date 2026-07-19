@@ -1,52 +1,74 @@
-const Project = require('../models/Project');
+const Project = require("../models/Project");
 
-const createProject = async (req,res) => {
-   try { 
-    const project = await Project.create(req.body);
-    res.status(201).json(project);
-   }
-   catch(error)
-   {
-    res.status(500).json({
-        message : error.message
-    });
-   }
+const createProject = async (req, res) => {
+    try {
+        const project = await Project.create(req.body);
+
+        return res.status(201).json({
+            success: true,
+            message: "Project created successfully.",
+            data: project,
+        });
+
+    } catch (error) {
+
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+
+    }
 };
 
-const getAllProjects = async (req,res)=> {
-    try 
-    {
-        const projects = await Project.find();
-        res.status(200).json(projects);
-    }
-    catch(error)
-    {
-        res.status(500).json ({
-            message : error.message
-        });
-    }
-}
+const getAllProjects = async (req, res) => {
+    try {
 
-const getProjectById = async (req , res) => {
-    try { 
+        const projects = await Project.find().lean();
+
+        return res.status(200).json({
+            success: true,
+            count: projects.length,
+            data: projects,
+        });
+
+    } catch (error) {
+
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+
+    }
+};
+
+const getProjectById = async (req, res) => {
+    try {
+
         const { id } = req.params;
 
-        const project = await Project.findById(id);
-        if (!project)
-        {
+        const project = await Project.findById(id).lean();
+
+        if (!project) {
             return res.status(404).json({
-                message : "Project Not Found"
+                success: false,
+                message: "Project not found.",
             });
         }
-        res.status(200).json(project);
-    }
-    catch (error)
-    {
-        res.status(500).json({
-            message : error.message
+
+        return res.status(200).json({
+            success: true,
+            data: project,
         });
+
+    } catch (error) {
+
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+
     }
-}
+};
 
 const updateProjectById = async (req, res) => {
     try {
@@ -64,15 +86,21 @@ const updateProjectById = async (req, res) => {
 
         if (!updatedProject) {
             return res.status(404).json({
-                message: "Project not found",
+                success: false,
+                message: "Project not found.",
             });
         }
 
-        res.status(200).json(updatedProject);
+        return res.status(200).json({
+            success: true,
+            message: "Project updated successfully.",
+            data: updatedProject,
+        });
 
     } catch (error) {
 
-        res.status(500).json({
+        return res.status(500).json({
+            success: false,
             message: error.message,
         });
 
@@ -88,15 +116,21 @@ const deleteProjectById = async (req, res) => {
 
         if (!deletedProject) {
             return res.status(404).json({
-                message: "Project not found",
+                success: false,
+                message: "Project not found.",
             });
         }
 
-        res.status(200).json(deletedProject);
+        return res.status(200).json({
+            success: true,
+            message: "Project deleted successfully.",
+            data: deletedProject,
+        });
 
     } catch (error) {
 
-        res.status(500).json({
+        return res.status(500).json({
+            success: false,
             message: error.message,
         });
 
