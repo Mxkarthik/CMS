@@ -30,9 +30,11 @@ app.use((req, res) => {
         success: false,
         message: "Route not found.",
     });
+
 });
 
 app.use(express.json());
+
 
 app.use(cookieParser());
 
@@ -60,7 +62,7 @@ app.use("/api/hero", heroRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
 const PORT = process.env.PORT;
-
+// l
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
