@@ -25,22 +25,12 @@ app.use(
     })
 );
 
-app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        message: "Route not found.",
-    });
-
-});
-
 app.use(express.json());
-
-
 app.use(cookieParser());
 
 app.use(
     session({
-        secret: process.env.SESSION_SECRET,
+        secret: process.env.SESSION_SECRET || "fallback_secret_change_in_prod",
         resave: false,
         saveUninitialized: false,
     })
@@ -60,6 +50,14 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/hero", heroRoutes);
 
 app.use("/api/analytics", analyticsRoutes);
+
+// 404 handler — must be LAST, after all routes
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: "Route not found.",
+    });
+});
 
 const PORT = process.env.PORT;
 // l
