@@ -1,4 +1,5 @@
-const Hero = require("../models/Hero")
+const Hero = require("../models/Hero");
+const uploadImage = require("../services/uploadServices");
 
 
 const getHero = async(req,res) => {
@@ -66,7 +67,34 @@ const updateHero = async(req,res)=> {
 }
 
 
+const uploadHeroImage = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: "No image file provided.",
+            });
+        }
+
+        const result = await uploadImage(req.file, {
+            folder: "hero",
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Image uploaded successfully",
+            imageUrl: result.url,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 module.exports = {
     getHero,
     updateHero,
-}
+    uploadHeroImage,
+};
