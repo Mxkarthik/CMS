@@ -5,6 +5,7 @@ import {
     HiOutlineSquares2X2,
     HiOutlinePhoto,
     HiOutlineFolderOpen,
+    HiOutlineWrenchScrewdriver,
 } from "react-icons/hi2";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { useSidebar } from "../context/SidebarContext";
@@ -13,6 +14,7 @@ const NAV = [
     { to: "/dashboard",          label: "Overview", icon: HiOutlineSquares2X2, end: true },
     { to: "/dashboard/hero",     label: "Hero",     icon: HiOutlinePhoto },
     { to: "/dashboard/projects", label: "Projects", icon: HiOutlineFolderOpen },
+    { to: "/dashboard/services", label: "Services", icon: HiOutlineWrenchScrewdriver },
 ];
 
 export default function MobileDrawer({ user, onLogout }) {
