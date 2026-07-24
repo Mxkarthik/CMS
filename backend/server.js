@@ -9,11 +9,12 @@ const passport = require("./config/passport");
 
 const connectDatabase = require("./config/database");
 
-const projectRoutes = require("./routes/projectRoutes");
-const heroRoutes = require("./routes/heroRoutes");
-const authRoutes = require("./routes/authRoutes");
+const projectRoutes   = require("./routes/projectRoutes");
+const heroRoutes      = require("./routes/heroRoutes");
+const authRoutes      = require("./routes/authRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const serviceRoutes   = require("./routes/serviceRoutes");
 
 const app = express();
 
@@ -46,13 +47,11 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authRoutes);
 
-app.use("/api/projects", projectRoutes);
-
-app.use("/api/hero", heroRoutes);
-
+app.use("/api/projects",  projectRoutes);
+app.use("/api/hero",      heroRoutes);
 app.use("/api/analytics", analyticsRoutes);
-
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/services",  serviceRoutes);
 
 // 404 handler — must be LAST, after all routes
 app.use((req, res) => {
