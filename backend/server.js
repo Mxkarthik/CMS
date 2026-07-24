@@ -23,7 +23,10 @@ connectDatabase();
 
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        origin: [
+            "http://localhost:5173", // Admin CMS
+            "http://localhost:5174", // Portfolio (dev fallback)
+        ],
         credentials: true,
     })
 );

@@ -1,21 +1,22 @@
 import { useState, useEffect } from "react";
-import { fetchHero } from "../services/publicApi.js";
+import { fetchHero }           from "../services/publicApi.js";
+import Hero                    from "../components/Hero/Hero.jsx";
 
 /**
- * Home — temporary diagnostic page.
+ * Home page
  *
- * Purpose : verify that the portfolio frontend can consume all Hero data
- *           from the backend Public API.
- *
- * NOT a production UI — no styling, no animations, no design system.
- * Replace this component once Hero data is confirmed working.
+ * Owns the data-fetching lifecycle for the Hero.
+ * Passes the live CMS data down to the Hero component.
+ * Does NOT fetch data in App.jsx.
  */
 function Home() {
-    const [hero, setHero]       = useState(null);
+    const [hero,    setHero]    = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError]     = useState(null);
+    const [error,   setError]   = useState(null);
 
     useEffect(() => {
+        let cancelled = false;
+
         const loadHero = async () => {
             try {
                 setLoading(true);
@@ -23,167 +24,125 @@ function Home() {
 
                 const heroData = await fetchHero();
 
-                // ── Debug: log the complete response ──────────────────────────
+                // Keep full API response visible in DevTools for debugging
                 console.group("[Home] Hero API response");
-                console.log("Hero object :", heroData);
-                console.log("backgroundImage :", heroData?.backgroundImage);
-                console.log("title           :", heroData?.title);
-                console.log("subtitle        :", heroData?.subtitle);
-                console.log("description     :", heroData?.description);
-                console.log("primaryCTA      :", {
+                console.log("Hero object       :", heroData);
+                console.log("backgroundImage   :", heroData?.backgroundImage);
+                console.log("title             :", heroData?.title);
+                console.log("subtitle          :", heroData?.subtitle);
+                console.log("description       :", heroData?.description);
+                console.log("primaryCTA        :", {
                     text: heroData?.ourServicesButtonText,
                     link: heroData?.ourServicesButtonLink,
                 });
-                console.log("secondaryCTA    :", {
+                console.log("secondaryCTA      :", {
                     text: heroData?.viewProjectsButtonText,
                     link: heroData?.viewProjectsButtonLink,
                 });
-                console.log("stats           :", {
-                    projectsCompleted: heroData?.projectsCompleted,
-                    happyClients:      heroData?.happyClients,
-                    yearsExperience:   heroData?.yearsExperience,
+                console.log("stats             :", {
+                    projectsCompleted:  heroData?.projectsCompleted,
+                    happyClients:       heroData?.happyClients,
+                    yearsExperience:    heroData?.yearsExperience,
                     clientSatisfaction: heroData?.clientSatisfaction,
                 });
                 console.groupEnd();
 
-                setHero(heroData);
+                if (!cancelled) setHero(heroData);
             } catch (err) {
                 console.error("[Home] Failed to fetch Hero data:", err);
-                setError(
-                    err?.response?.data?.message ||
-                    err?.message ||
-                    "Unknown error — check that the backend is running."
-                );
+                if (!cancelled) {
+                    setError(
+                        err?.response?.data?.message ||
+                        err?.message ||
+                        "Unknown error — check that the backend is running."
+                    );
+                }
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
         };
 
         loadHero();
+        return () => { cancelled = true; };
     }, []);
 
-    // ── Loading state ──────────────────────────────────────────────────────
+    /* ── Loading ──────────────────────────────────────────────── */
     if (loading) {
         return (
-            <div id="home-loading">
-                <p>Loading Hero data from backend…</p>
+            <div
+                id="home-loading"
+                style={{
+                    minHeight: "100svh",
+                    display:   "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "#0a0a0e",
+                    color:     "rgba(255,255,255,0.6)",
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    fontSize:  "0.875rem",
+                    letterSpacing: "0.1em",
+                }}
+            >
+                Loading…
             </div>
         );
     }
 
-    // ── Error state ────────────────────────────────────────────────────────
+    /* ── Error ────────────────────────────────────────────────── */
     if (error) {
         return (
-            <div id="home-error">
-                <h2>Could not load Hero data</h2>
-                <p>{error}</p>
-                <p>
-                    Make sure the backend is running at{" "}
-                    <code>{import.meta.env.VITE_API_URL}</code> and that the
-                    database contains a Hero document.
+            <div
+                id="home-error"
+                style={{
+                    minHeight:      "100svh",
+                    display:        "flex",
+                    flexDirection:  "column",
+                    alignItems:     "center",
+                    justifyContent: "center",
+                    gap:            "0.75rem",
+                    background:     "#0a0a0e",
+                    color:          "rgba(255,255,255,0.7)",
+                    fontFamily:     "'Inter', system-ui, sans-serif",
+                    padding:        "2rem",
+                    textAlign:      "center",
+                }}
+            >
+                <p style={{ fontSize: "1.5rem", color: "#c9a96e" }}>⚠</p>
+                <p style={{ fontWeight: 500, color: "#fff" }}>
+                    Could not connect to the backend
                 </p>
+                <p style={{ fontSize: "0.875rem", maxWidth: "38ch" }}>{error}</p>
             </div>
         );
     }
 
-    // ── No hero in DB yet ─────────────────────────────────────────────────
+    /* ── No data ──────────────────────────────────────────────── */
     if (!hero) {
         return (
-            <div id="home-empty">
-                <p>No Hero data found. Create one in the Admin CMS.</p>
+            <div
+                id="home-empty"
+                style={{
+                    minHeight:      "100svh",
+                    display:        "flex",
+                    alignItems:     "center",
+                    justifyContent: "center",
+                    background:     "#0a0a0e",
+                    color:          "rgba(255,255,255,0.5)",
+                    fontFamily:     "'Inter', system-ui, sans-serif",
+                    fontSize:       "0.875rem",
+                }}
+            >
+                No Hero data found. Create one in the Admin CMS.
             </div>
         );
     }
 
-    // ── Success state — raw data dump ──────────────────────────────────────
+    /* ── Success ──────────────────────────────────────────────── */
     return (
-        <div id="home-debug">
-            <h1>Hero Data — Debug View</h1>
-            <p>
-                <strong>API:</strong>{" "}
-                <code>{import.meta.env.VITE_API_URL}/api/public/home</code>
-            </p>
-
-            {/* Background image — rendered to verify Cloudinary URL loads */}
-            <section id="hero-background-image">
-                <h2>Background Image</h2>
-                <p>
-                    <strong>URL:</strong> <code>{hero.backgroundImage}</code>
-                </p>
-                <img
-                    src={hero.backgroundImage}
-                    alt="Hero background"
-                    id="hero-bg-img"
-                    onLoad={() =>
-                        console.log("[Home] Background image loaded successfully ✓")
-                    }
-                    onError={() =>
-                        console.error(
-                            "[Home] Background image FAILED to load:",
-                            hero.backgroundImage
-                        )
-                    }
-                />
-            </section>
-
-            {/* Text fields */}
-            <section id="hero-text-fields">
-                <h2>Text Fields</h2>
-
-                <p><strong>Title:</strong> {hero.title}</p>
-                <p><strong>Subtitle:</strong> {hero.subtitle}</p>
-                <p><strong>Description:</strong> {hero.description}</p>
-            </section>
-
-            {/* CTA buttons */}
-            <section id="hero-cta-buttons">
-                <h2>CTA Buttons</h2>
-
-                <p>
-                    <strong>Primary button text:</strong>{" "}
-                    {hero.ourServicesButtonText}
-                </p>
-                <p>
-                    <strong>Primary button link:</strong>{" "}
-                    <code>{hero.ourServicesButtonLink}</code>
-                </p>
-
-                <p>
-                    <strong>Secondary button text:</strong>{" "}
-                    {hero.viewProjectsButtonText}
-                </p>
-                <p>
-                    <strong>Secondary button link:</strong>{" "}
-                    <code>{hero.viewProjectsButtonLink}</code>
-                </p>
-            </section>
-
-            {/* Stats */}
-            <section id="hero-stats">
-                <h2>Stats</h2>
-
-                <p>
-                    <strong>Projects Completed:</strong>{" "}
-                    {hero.projectsCompleted}
-                </p>
-                <p>
-                    <strong>Happy Clients:</strong> {hero.happyClients}
-                </p>
-                <p>
-                    <strong>Years Experience:</strong> {hero.yearsExperience}
-                </p>
-                <p>
-                    <strong>Client Satisfaction:</strong>{" "}
-                    {hero.clientSatisfaction}%
-                </p>
-            </section>
-
-            {/* Raw JSON — full object */}
-            <section id="hero-raw-json">
-                <h2>Raw API Response</h2>
-                <pre>{JSON.stringify(hero, null, 2)}</pre>
-            </section>
-        </div>
+        <main id="home" aria-label="Portfolio home page">
+            <Hero hero={hero} />
+            {/* Future sections go here */}
+        </main>
     );
 }
 
