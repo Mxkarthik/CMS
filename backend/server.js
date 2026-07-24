@@ -13,6 +13,7 @@ const projectRoutes = require("./routes/projectRoutes");
 const heroRoutes = require("./routes/heroRoutes");
 const authRoutes = require("./routes/authRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const app = express();
 
@@ -50,6 +51,8 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/hero", heroRoutes);
 
 app.use("/api/analytics", analyticsRoutes);
+
+app.use("/api/dashboard", dashboardRoutes);
 
 // 404 handler — must be LAST, after all routes
 app.use((req, res) => {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, NavLink, Outlet } from "react-router-dom";
 import axios from "axios";
-import { HiOutlineBars3, HiOutlineSquares2X2, HiOutlinePhoto } from "react-icons/hi2";
+import { HiOutlineBars3, HiOutlineSquares2X2, HiOutlinePhoto, HiOutlineFolderOpen } from "react-icons/hi2";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { SidebarProvider, useSidebar } from "../context/SidebarContext";
 import MobileDrawer from "../components/MobileDrawer";
@@ -9,8 +9,9 @@ import MobileDrawer from "../components/MobileDrawer";
 const API = import.meta.env.VITE_API_URL ?? "http://localhost:5000";
 
 const NAV = [
-    { to: "/dashboard",      label: "Overview", icon: HiOutlineSquares2X2, end: true },
-    { to: "/dashboard/hero", label: "Hero",     icon: HiOutlinePhoto },
+    { to: "/dashboard",          label: "Overview",  icon: HiOutlineSquares2X2, end: true },
+    { to: "/dashboard/hero",     label: "Hero",      icon: HiOutlinePhoto },
+    { to: "/dashboard/projects", label: "Projects",  icon: HiOutlineFolderOpen },
 ];
 
 // ── mobile top bar (only rendered < lg) ──────────────────────────────────

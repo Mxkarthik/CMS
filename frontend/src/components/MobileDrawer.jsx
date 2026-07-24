@@ -1,12 +1,18 @@
 import { useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
-import { HiOutlineXMark, HiOutlineSquares2X2, HiOutlinePhoto } from "react-icons/hi2";
+import {
+    HiOutlineXMark,
+    HiOutlineSquares2X2,
+    HiOutlinePhoto,
+    HiOutlineFolderOpen,
+} from "react-icons/hi2";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { useSidebar } from "../context/SidebarContext";
 
 const NAV = [
-    { to: "/dashboard",      label: "Overview", icon: HiOutlineSquares2X2, end: true },
-    { to: "/dashboard/hero", label: "Hero",     icon: HiOutlinePhoto },
+    { to: "/dashboard",          label: "Overview", icon: HiOutlineSquares2X2, end: true },
+    { to: "/dashboard/hero",     label: "Hero",     icon: HiOutlinePhoto },
+    { to: "/dashboard/projects", label: "Projects", icon: HiOutlineFolderOpen },
 ];
 
 export default function MobileDrawer({ user, onLogout }) {
@@ -21,11 +27,10 @@ export default function MobileDrawer({ user, onLogout }) {
         return () => document.removeEventListener("keydown", handler);
     }, [open, closeDrawer]);
 
-    // trap focus & prevent body scroll while open
+    // lock body scroll + move focus into drawer when open
     useEffect(() => {
         if (open) {
             document.body.style.overflow = "hidden";
-            // move focus into the drawer
             setTimeout(() => firstLinkRef.current?.focus(), 50);
         } else {
             document.body.style.overflow = "";
@@ -35,7 +40,7 @@ export default function MobileDrawer({ user, onLogout }) {
 
     return (
         <>
-            {/* ── backdrop ─────────────────────────────────────────── */}
+            {/* backdrop */}
             <div
                 aria-hidden="true"
                 onClick={closeDrawer}
@@ -46,7 +51,7 @@ export default function MobileDrawer({ user, onLogout }) {
                 `}
             />
 
-            {/* ── drawer panel ─────────────────────────────────────── */}
+            {/* drawer panel */}
             <div
                 role="dialog"
                 aria-modal="true"
@@ -61,7 +66,7 @@ export default function MobileDrawer({ user, onLogout }) {
                     ${open ? "translate-x-0" : "-translate-x-full"}
                 `}
             >
-                {/* drawer header */}
+                {/* header */}
                 <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-gray-900 to-gray-700 flex items-center justify-center shrink-0">
@@ -74,8 +79,7 @@ export default function MobileDrawer({ user, onLogout }) {
                         onClick={closeDrawer}
                         aria-label="Close navigation"
                         className="
-                            w-9 h-9 flex items-center justify-center
-                            rounded-xl text-gray-400
+                            w-9 h-9 flex items-center justify-center rounded-xl text-gray-400
                             hover:bg-gray-100 hover:text-gray-700
                             transition-colors duration-150
                             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900
@@ -132,7 +136,6 @@ export default function MobileDrawer({ user, onLogout }) {
                             </div>
                         </div>
                     )}
-
                     <button
                         type="button"
                         onClick={() => { closeDrawer(); onLogout(); }}
